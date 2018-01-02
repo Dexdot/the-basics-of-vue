@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	
+	<meta charset="utf-8">
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	
+	<title>learn.vue</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+	<link rel="stylesheet" href="style.css">
+	<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900" rel="stylesheet">
+</head>
+<body>
+
+		<div class="container">
+			<h1>Основы Vue</h1>
+		</div>
+
+		<div id="app">
+			<div class="container">
+
+				<div class="task task-zero">
+					<h2>Задача 0. Кино</h2>
+					<p>Фильтр поиска по названию фильма.</p>
+					<input type="text" class="form-control" v-model="taskZero.search" placeholder="Введите название фильма">
+					<div class="films">
+						<div class="film" v-for="film in filteredFilms">
+							<h4 class="film-name">{{ film.name }}</h4>
+							<p class="film-desc">{{ film.desc }}</p>
+							<button class="btn btn-success vote-up" :disabled="film.voted" @click.prevent="vote(film)">Лайк</button>
+							<button class="btn btn-danger vote-down" :disabled="film.voted" @click.prevent="vote(film)">Дизлайк</button>
+						</div>
+					</div>
+				</div>
+
+				<div class="task task-one">
+					<h2>Задача 1. Рандом</h2>
+					<p>Каждую секунду генерируется случайное число, которое считается удовлетворительным, если оно >= 5 и <= 10.</p>
+					{{ taskOne.randomNum }}
+					<template v-if="taskOne.randomNum < 5"> - слишком мало</template>
+					<template v-else-if="taskOne.randomNum >= 5 && taskOne.randomNum <= 10"> - подходит</template>
+					<template v-else="taskOne.randomNum > 10"> - слишком много</template>
+					<div class="buttons">
+						<button type="button" class="btn btn-primary" @click.prevent="startTaskOne">Запустить</button>
+						<button type="button" class="btn btn-danger" @click.prevent="stopTaskOne">Остановить</button>
+					</div>
+				</div>
+
+				<div class="task task-two">
+					<h2>Задача 2. Реверс</h2>
+					<p>Имя и фамилия в обратном порядке.</p>
+					<input type="text" class="form-control" placeholder="Ваша фамилия" v-model="taskTwo.lastName">
+					<input type="text" class="form-control" placeholder="Ваше имя" v-model="taskTwo.firstName">
+					<p>Полное имя:<br> {{ fullName }}</p>
+					<p>В обратном порядке:<br> {{ reversedName }}</p>
+				</div>
+
+				<div class="task task-three">
+					<h2>Задача 3. Твит</h2>
+					<p>Если кол-во символов сообщения больше 10 - цвет текста становится оранжевым, если равным 20 - красным. Пробелы вначале и в конце не учитываются.</p>
+					<textarea class="form-control" placeholder="Введите сообщение" maxlength="20" rows="2" v-model.trim="taskThree.tweet" :class="tweetClass"></textarea>
+					<p>Кол-во символов: {{ taskThree.tweet.length }}</p>
+				</div>
+
+				<div class="task task-four">
+					<h2>Задача 4. Блог</h2>
+					<p>Имитация AJAX-запроса на получение статей, которые можно отметить как прочитанное.</p>
+					<button type="button" class="btn btn-primary" @click.prevent="getPosts">Получить статьи</button>
+					<p v-if="taskFour.show && !taskFour.loaded">Пожалуйста, подождите...</p>
+					<div class="post" :class="{ 'read': post.read }" v-if="taskFour.loaded" v-for="post in taskFour.posts">
+						<h3>{{ post.title }} #{{ post.id }}</h3>
+						<p>{{ post.body }}</p>
+						<button class="btn btn-info" type="button" v-if="!post.read" @click.prevent="markRead(post.id)">Отметить как прочитанное</button>
+					</div>
+				</div>
+
+				<div class="task task-five">
+					<h2>Задача 5. Зоопарк</h2>
+					<p>Ответ в зависимости от выбора.</p>
+					<label>
+						<input class="form-check-input" type="radio" value="woof" v-model="taskFive.choice">
+						Собака
+					</label>
+					<label>
+						<input class="form-check-input" type="radio" value="meow" v-model="taskFive.choice">
+						Кошка
+					</label>
+					<label>
+						<input class="form-check-input" type="radio" value="moo" v-model="taskFive.choice">
+						Корова
+					</label>
+					<p>{{ taskFive.choice }}</p>
+				</div>
+
+				<div class="task task-six">
+					<h2>Задача 6. Фрукты</h2>
+					<label class="task-six-label">
+						<input class="form-check-input" type="checkbox" value="Абрикосы" v-model="taskSix.choices">
+						Абрикосы
+					</label>
+					<label class="task-six-label">
+						<input class="form-check-input" type="checkbox" value="Яблоки" v-model="taskSix.choices">
+						Яблоки
+					</label>
+					<label class="task-six-label">
+						<input class="form-check-input" type="checkbox" value="Вишня" v-model="taskSix.choices">
+						Вишня
+					</label>
+					Ваш выбор:
+					<span class="choices" v-for="choice in taskSix.choices">
+						{{ choice }}
+					</span>
+				</div>
+
+				<div class="task task-seven">
+					<h2>Задача 7. Загрузка</h2>
+					<p>Анимация полосы загрузки.</p>
+					<div class="buttons">
+						<button type="button" class="btn btn-primary" @click.prevent="loadBar">Загрузить</button>
+						<button type="button" class="btn btn-danger" @click.prevent="resetBar">Сбросить</button>
+					</div>
+					<div class="load">
+						<div class="load-bar" :style="{width: taskSeven.progress + '%'}">
+						</div>
+					</div>
+					<div class="percents">
+						<label>
+							<input class="form-check-input" type="checkbox" value="true" v-model="taskSeven.showPercents">
+							Показывать загрузку в процентах
+						</label>
+						<span v-if="taskSeven.showPercents">{{ taskSeven.progress }}%</span>
+					</div>
+				</div>
+
+				<div class="task task-eight">
+					<h2>Задача 8. Страны</h2>
+					<p>Выбрав название страны выдает её код.</p>
+					<select class="form-control" v-model="taskEight.country">
+						<option value="">Выберите страну</option>
+						<option :value="country.code" v-for="country in taskEight.countries">{{ country.name }}</option>
+					</select>
+					<p>Код страны: {{ taskEight.country }}</p>
+				</div>
+
+				<div class="task task-nine">
+					<h2>Задача 9. Конвертер</h2>
+					<p>Перевод рублей в доллары и наоборот ($1 = ₽60).</p>
+					<label>
+						<input type="text" class="form-control" v-model="formattedDollars">₽{{ computedRubles }}
+					</label>
+					<label>
+						<input type="text" class="form-control" v-model="formattedRubles">${{ computedDollars }}
+					</label>
+				</div>
+
+				<div class="task task-ten">
+					<h2>Задача 10. Да/Нет</h2>
+					<p>Отвечает на вопрос "Да" / "Нет" / "Может быть".</p>
+					<input type="text" class="form-control" v-model.trim="taskTen.question">
+					<p>{{ taskTen.answer }}</p>
+				</div>
+
+				<div class="task task-eleven">
+					<h2>Задача 11. Фильтр</h2>
+					<p>Если длина текста больше N символов, то он обрезается. Пробелы вначале и в конце не учитываются.</p>
+					<label>Введи N:<input type="number" class="form-control" rows="2" v-model.trim.number="taskEleven.edge"></label>
+					<input type="text" class="form-control" rows="2" v-model.trim="taskEleven.post" placeholder="Введите текст">
+					<p>Длина текста: {{ taskEleven.post.length }} символов</p>
+					<p>Обрезанный текст:<br>
+						{{ taskEleven.post | truncate(taskEleven.edge) }}
+					</p>
+				</div>
+
+				<div class="task microtask">
+					<h2>Микротаск</h2>
+					<input type="text" class="form-control" rows="2" v-model.trim="microTask.hoverMsg" placeholder="Введите текст">
+					<button type="button" class="btn btn-warning" :title="microTask.hoverMsg">А теперь наведи на меня</button>
+				</div>
+
+			</div>
+		</div>
+
+
+
+
+	<script src="https://unpkg.com/vue"></script>
+	<script src="https://unpkg.com/lodash"></script>
+	<script src="main.js"></script>
+</body>
+</html>
